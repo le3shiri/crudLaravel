@@ -4,20 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Str;
 
 class UpdateArticleRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'slug' => $this->input('slug') ?: Str::slug($this->input('title'))
-        ]);
     }
 
     public function rules(): array
@@ -27,10 +19,11 @@ class UpdateArticleRequest extends FormRequest
         return [
             'title'   => ['required','string','min:3','max:150'],
             'slug'    => [
-                'required','string','max:180',
+                'nullable','string','max:180',
                 Rule::unique('articles','slug')->ignore($article)
             ],
-            'content' => ['required','string','min:20'],
+            'excerpt' => ['nullable','string','max:255'],
+            'content' => ['nullable','string'],
         ];
     }
 
